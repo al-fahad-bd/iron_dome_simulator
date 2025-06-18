@@ -146,6 +146,16 @@ class _GameScreenState extends State<GameScreen> {
                                 letterSpacing: 0.5,
                               ),
                             ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '${ctrl.successfulInterceptions.value} successful hits',
+                              style: TextStyle(
+                                color: Colors.green[400],
+                                fontSize: 10,
+                                fontFamily: 'monospace',
+                                letterSpacing: 0.5,
+                              ),
+                            ),
                           ],
                         ),
                       ),

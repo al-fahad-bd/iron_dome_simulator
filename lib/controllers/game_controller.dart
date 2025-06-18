@@ -9,6 +9,8 @@ class GameController extends GetxController {
   final missiles = <Missile>[].obs;
   final explosions = <Explosion>[].obs;
   final totalCost = 0.obs; // Track total cost in dollars
+  final successfulInterceptions =
+      0.obs; // Track successful missile interceptions
   Timer? gameTimer;
   Timer? spawnTimer;
   final Random random = Random();
@@ -131,6 +133,9 @@ class GameController extends GetxController {
           // Add explosion at collision point
           final mid = (missiles[i].position + missiles[j].position) / 2;
           newExplosions.add(Explosion(position: mid));
+          
+          // Increment successful interceptions counter
+          successfulInterceptions.value++;
         }
       }
     }

@@ -3,7 +3,6 @@ import 'dart:math';
 import 'dart:async';
 import 'dart:ui' as ui;
 import 'package:get/get.dart';
-import 'screens/splash_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -70,7 +69,7 @@ class _SplashScreenState extends State<SplashScreen>
         _imageLoaded = true;
       });
     } catch (e) {
-      print('Error loading launcher image: $e');
+      debugPrint('Error loading launcher image: $e');
     }
   }
 
@@ -219,7 +218,7 @@ class GameController extends GetxController {
       startGame(); // Start the game after images are loaded
       update();
     } catch (e) {
-      print('Error loading images: $e');
+      debugPrint('Error loading images: $e');
     }
   }
 
@@ -356,7 +355,7 @@ class GamePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final protectedZone =
         Paint()
-          ..color = Colors.green.withOpacity(0.3)
+          ..color = Colors.green.withValues(alpha: 0.3)
           ..style = PaintingStyle.fill;
     canvas.drawRect(Rect.fromLTWH(0, 580, size.width, 20), protectedZone);
 
@@ -374,12 +373,12 @@ class GamePainter extends CustomPainter {
   void _drawExplosion(Canvas canvas, Explosion explosion) {
     final paint =
         Paint()
-          ..color = Colors.yellow.withOpacity(explosion.opacity)
+          ..color = Colors.yellow.withValues(alpha: explosion.opacity)
           ..style = PaintingStyle.fill;
     canvas.drawCircle(explosion.position, explosion.radius, paint);
     final border =
         Paint()
-          ..color = Colors.orange.withOpacity(explosion.opacity)
+          ..color = Colors.orange.withValues(alpha: explosion.opacity)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 2;
     canvas.drawCircle(explosion.position, explosion.radius, border);

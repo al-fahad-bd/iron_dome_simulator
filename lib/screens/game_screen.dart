@@ -54,7 +54,7 @@ class GamePainter extends CustomPainter {
     // Draw protected zone
     final protectedZone =
         Paint()
-          ..color = Colors.green.withOpacity(0.3)
+          ..color = Colors.green.withValues(alpha: 0.3)
           ..style = PaintingStyle.fill;
     canvas.drawRect(Rect.fromLTWH(0, 580, size.width, 20), protectedZone);
 
@@ -141,7 +141,7 @@ class GamePainter extends CustomPainter {
     // Draw targeting reticle
     final reticlePaint =
         Paint()
-          ..color = Colors.red.withOpacity(0.7) // More opaque red
+          ..color = Colors.red.withValues(alpha: 0.7) // More opaque red
           ..style = PaintingStyle.stroke
           ..strokeWidth = 2; // Thicker lines
 
@@ -165,12 +165,12 @@ class GamePainter extends CustomPainter {
   void _drawExplosion(Canvas canvas, Explosion explosion) {
     final paint =
         Paint()
-          ..color = Colors.yellow.withOpacity(explosion.opacity)
+          ..color = Colors.yellow.withValues(alpha: explosion.opacity)
           ..style = PaintingStyle.fill;
     canvas.drawCircle(explosion.position, explosion.radius, paint);
     final border =
         Paint()
-          ..color = Colors.orange.withOpacity(explosion.opacity)
+          ..color = Colors.orange.withValues(alpha: explosion.opacity)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 2;
     canvas.drawCircle(explosion.position, explosion.radius, border);

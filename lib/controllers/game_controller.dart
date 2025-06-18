@@ -52,7 +52,7 @@ class GameController extends GetxController {
       startGame(); // Start the game after images are loaded
       update();
     } catch (e) {
-      print('Error loading images: $e');
+      debugPrint('Error loading images: $e');
     }
   }
 

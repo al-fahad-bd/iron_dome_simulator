@@ -49,7 +49,7 @@ class _SplashScreenState extends State<SplashScreen>
         _imageLoaded = true;
       });
     } catch (e) {
-      print('Error loading launcher image: $e');
+      debugPrint('Error loading launcher image: $e');
     }
   }
 

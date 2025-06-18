@@ -11,16 +11,19 @@ class GameController extends GetxController {
   final totalCost = 0.obs; // Track total cost in dollars
   final successfulInterceptions =
       0.obs; // Track successful missile interceptions
+  final groundHits = 0.obs; // Track enemy missiles that hit the ground
   Timer? gameTimer;
   Timer? spawnTimer;
   final Random random = Random();
-  
+
   // Screen dimensions
   double screenWidth = 400;
   double screenHeight = 650;
-  
+
   // Cost per missile launch
   static const int costPerMissile = 50000; // $50K per missile
+  static const double enemyMissileLength =
+      30; // Height of the enemy missile image in pixels
 
   // Image caches
   ui.Image? enemyMissileImage;
@@ -100,9 +103,14 @@ class GameController extends GetxController {
     if (!imagesLoaded) return;
 
     // Fire from center bottom of screen
-    final launcherX = screenWidth / 2;
-    final launcherY = screenHeight - 50;
-    
+    // final launcherX = screenWidth / 2;
+    // final launcherY = screenHeight - 50;
+
+    // Fire from launcher tube (centered between the two tubes for now)
+    final tubeOffsets = [screenWidth / 2 - 34, screenWidth / 2 + 34];
+    final launcherX = tubeOffsets[random.nextInt(2)];
+    final launcherY = screenHeight - 60;
+
     missiles.add(
       Missile(
         position: Offset(launcherX, launcherY),
@@ -111,7 +119,7 @@ class GameController extends GetxController {
         image: interceptorImage,
       ),
     );
-    
+
     // Add cost for missile launch
     totalCost.value += costPerMissile;
   }
@@ -132,8 +140,8 @@ class GameController extends GetxController {
           toRemove.add(j);
           // Add explosion at collision point
           final mid = (missiles[i].position + missiles[j].position) / 2;
-          newExplosions.add(Explosion(position: mid));
-          
+          newExplosions.add(Explosion(position: mid, isGround: false));
+
           // Increment successful interceptions counter
           successfulInterceptions.value++;
         }
@@ -145,13 +153,23 @@ class GameController extends GetxController {
       if (idx < missiles.length) missiles.removeAt(idx);
     }
     // Remove out-of-bounds missiles
-    missiles.removeWhere(
-      (missile) =>
+    missiles.removeWhere((missile) {
+      bool outOfBounds =
           missile.position.dy > screenHeight + 50 ||
           missile.position.dy < -50 ||
           missile.position.dx < -50 ||
-          missile.position.dx > screenWidth + 50,
-    );
+          missile.position.dx > screenWidth + 50;
+      bool hitProtectedZone =
+          !missile.isInterceptor &&
+          (missile.position.dy + enemyMissileLength / 2) >= screenHeight - 70;
+      if (hitProtectedZone) {
+        // Add explosion at the hit location
+        explosions.add(Explosion(position: missile.position, isGround: true));
+        groundHits.value++;
+        // (Optional) You can add logic here for lives, score, etc.
+      }
+      return outOfBounds || hitProtectedZone;
+    });
     // Add new explosions
     explosions.addAll(newExplosions);
     // Update explosions

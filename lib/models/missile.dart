@@ -21,6 +21,7 @@ class Explosion {
   double maxRadius;
   double opacity;
   int lifetime;
+  bool isGround;
 
   Explosion({
     required this.position,
@@ -28,5 +29,6 @@ class Explosion {
     this.maxRadius = 30,
     this.opacity = 1.0,
     this.lifetime = 10, // 10 frames (0.5s)
+    this.isGround = false,
   });
 }

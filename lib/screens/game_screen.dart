@@ -4,33 +4,74 @@ import 'package:get/get.dart';
 import '../controllers/game_controller.dart';
 import '../models/missile.dart';
 
-class GameScreen extends StatelessWidget {
+class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
 
   @override
+  State<GameScreen> createState() => _GameScreenState();
+}
+
+class _GameScreenState extends State<GameScreen> {
+  late GameController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.put(GameController());
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final GameController controller = Get.put(GameController());
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text('Iron Dome Simulation'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
-      body: GestureDetector(
-        onTapDown: (details) {
-          controller.fireInterceptor(details.localPosition);
-        },
-        child: Center(
-          child: GetBuilder<GameController>(
-            builder:
-                (ctrl) => CustomPaint(
-                  painter: GamePainter(
-                    missiles: ctrl.missiles,
-                    explosions: ctrl.explosions,
-                  ),
-                  size: const Size(400, 650),
-                ),
+        title: const Text(
+          'IRON DOME SIMULATION',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            fontFamily: 'monospace',
+            letterSpacing: 2.0,
+            shadows: [
+              Shadow(offset: Offset(0, 2), blurRadius: 4, color: Colors.blue),
+            ],
           ),
         ),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFF0F172A), Color(0xFF1E3A8A), Color(0xFF0F172A)],
+            ),
+          ),
+        ),
+      ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          // Update controller with screen dimensions
+          controller.setScreenSize(constraints.maxWidth, constraints.maxHeight);
+
+          return GestureDetector(
+            onTapDown: (details) {
+              controller.fireInterceptor(details.localPosition);
+            },
+            child: GetBuilder<GameController>(
+              builder:
+                  (ctrl) => CustomPaint(
+                    painter: GamePainter(
+                      missiles: ctrl.missiles,
+                      explosions: ctrl.explosions,
+                    ),
+                    size: Size.infinite,
+                  ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -51,12 +92,15 @@ class GamePainter extends CustomPainter {
           ..style = PaintingStyle.fill;
     canvas.drawRect(Offset.zero & size, background);
 
-    // Draw protected zone
+    // Draw protected zone at the bottom
     final protectedZone =
         Paint()
           ..color = Colors.green.withValues(alpha: 0.3)
           ..style = PaintingStyle.fill;
-    canvas.drawRect(Rect.fromLTWH(0, 580, size.width, 20), protectedZone);
+    canvas.drawRect(
+      Rect.fromLTWH(0, size.height - 70, size.width, 20),
+      protectedZone,
+    );
 
     // Draw missile launcher pad
     _drawLauncherPad(canvas, size);
@@ -73,91 +117,85 @@ class GamePainter extends CustomPainter {
   }
 
   void _drawLauncherPad(Canvas canvas, Size size) {
+    final centerX = size.width / 2;
+    final bottomY = size.height - 50;
+    
     // Draw base platform
     final platformPaint =
         Paint()
-          ..color =
-              Colors.grey[900]! // Darker grey for better contrast
+          ..color = Colors.grey[900]!
           ..style = PaintingStyle.fill;
     canvas.drawRect(
-      Rect.fromLTWH(150, 560, 100, 30), // Moved up above green line
+      Rect.fromLTWH(centerX - 50, bottomY - 30, 100, 30),
       platformPaint,
     );
 
     // Draw launcher structure
     final structurePaint =
         Paint()
-          ..color =
-              Colors.grey[800]! // Lighter grey for contrast
+          ..color = Colors.grey[800]!
           ..style = PaintingStyle.fill;
 
     // Draw vertical support
     canvas.drawRect(
-      Rect.fromLTWH(190, 540, 20, 20), // Moved up above platform
+      Rect.fromLTWH(centerX - 10, bottomY - 50, 20, 20),
       structurePaint,
     );
 
     // Draw launcher arms
     final armPaint =
         Paint()
-          ..color =
-              Colors.grey[700]! // Even lighter grey
-          ..style =
-              PaintingStyle
-                  .stroke // Changed to stroke for better visibility
-          ..strokeWidth =
-              6 // Thicker lines
+          ..color = Colors.grey[700]!
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 6
           ..strokeCap = StrokeCap.round;
 
     // Left arm
     canvas.drawLine(
-      const Offset(190, 540), // Adjusted position
-      const Offset(170, 530), // Adjusted position
+      Offset(centerX - 10, bottomY - 50),
+      Offset(centerX - 30, bottomY - 60),
       armPaint,
     );
 
     // Right arm
     canvas.drawLine(
-      const Offset(210, 540), // Adjusted position
-      const Offset(230, 530), // Adjusted position
+      Offset(centerX + 10, bottomY - 50),
+      Offset(centerX + 30, bottomY - 60),
       armPaint,
     );
 
     // Draw launcher details
     final detailPaint =
         Paint()
-          ..color =
-              Colors.grey[600]! // Lighter grey for details
+          ..color = Colors.grey[600]!
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 3; // Thicker lines
+          ..strokeWidth = 3;
 
     // Draw circular details
     canvas.drawCircle(
-      const Offset(200, 545), // Adjusted position
-      8, // Larger circle
+      Offset(centerX, bottomY - 45), 8,
       detailPaint,
     );
 
     // Draw targeting reticle
     final reticlePaint =
         Paint()
-          ..color = Colors.red.withValues(alpha: 0.7) // More opaque red
+          ..color = Colors.red.withValues(alpha: 0.7)
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 2; // Thicker lines
+          ..strokeWidth = 2;
 
     canvas.drawCircle(
-      const Offset(200, 545), // Adjusted position
-      12, // Larger reticle
+      Offset(centerX, bottomY - 45), 12,
       reticlePaint,
     );
     canvas.drawLine(
-      const Offset(200, 533), // Adjusted position
-      const Offset(200, 557), // Adjusted position
+      Offset(centerX, bottomY - 57),
+      Offset(centerX, bottomY - 33),
       reticlePaint,
     );
     canvas.drawLine(
-      const Offset(188, 545), // Adjusted position
-      const Offset(212, 545), // Adjusted position
+      Offset(centerX - 12, bottomY - 45),
+      Offset(centerX + 12, bottomY - 45),
       reticlePaint,
     );
   }
@@ -219,3 +257,4 @@ class GamePainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
+

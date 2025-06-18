@@ -74,19 +74,41 @@ class _SplashScreenState extends State<SplashScreen>
                   size: const Size(200, 200),
                   painter: LauncherPainter(image: _launcherImage!),
                 ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
               const Text(
-                'Iron Dome Simulation',
+                'IRON DOME SIMULATION',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 24,
+                  fontSize: 28,
                   fontWeight: FontWeight.bold,
+                  fontFamily: 'monospace',
+                  letterSpacing: 3.0,
+                  shadows: [
+                    Shadow(
+                      offset: Offset(0, 3),
+                      blurRadius: 6,
+                      color: Colors.blue,
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 10),
-              const Text(
-                'Defend the Protected Zone',
-                style: TextStyle(color: Colors.grey, fontSize: 16),
+              const SizedBox(height: 15),
+              Text(
+                'DEFEND THE PROTECTED ZONE',
+                style: TextStyle(
+                  color: Colors.blue[300],
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'monospace',
+                  letterSpacing: 1.5,
+                  shadows: [
+                    Shadow(
+                      offset: const Offset(0, 2),
+                      blurRadius: 4,
+                      color: Colors.blue.withValues(alpha: 0.5),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

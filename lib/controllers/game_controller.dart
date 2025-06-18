@@ -11,6 +11,10 @@ class GameController extends GetxController {
   Timer? gameTimer;
   Timer? spawnTimer;
   final Random random = Random();
+  
+  // Screen dimensions
+  double screenWidth = 400;
+  double screenHeight = 650;
 
   // Image caches
   ui.Image? enemyMissileImage;
@@ -21,6 +25,11 @@ class GameController extends GetxController {
   void onInit() {
     super.onInit();
     _loadImages();
+  }
+
+  void setScreenSize(double width, double height) {
+    screenWidth = width;
+    screenHeight = height;
   }
 
   Future<void> _loadImages() async {
@@ -70,7 +79,7 @@ class GameController extends GetxController {
   void spawnMissile() {
     if (!imagesLoaded) return;
 
-    final x = random.nextDouble() * 400;
+    final x = random.nextDouble() * screenWidth;
     final targetX = x + (random.nextDouble() * 100 - 50);
     missiles.add(
       Missile(
@@ -84,10 +93,14 @@ class GameController extends GetxController {
   void fireInterceptor(Offset tapPosition) {
     if (!imagesLoaded) return;
 
+    // Fire from center bottom of screen
+    final launcherX = screenWidth / 2;
+    final launcherY = screenHeight - 50;
+    
     missiles.add(
       Missile(
-        position: const Offset(200, 600),
-        velocity: Offset((tapPosition.dx - 200) / 50, -4),
+        position: Offset(launcherX, launcherY),
+        velocity: Offset((tapPosition.dx - launcherX) / 50, -4),
         isInterceptor: true,
         image: interceptorImage,
       ),
@@ -122,10 +135,10 @@ class GameController extends GetxController {
     // Remove out-of-bounds missiles
     missiles.removeWhere(
       (missile) =>
-          missile.position.dy > 650 ||
+          missile.position.dy > screenHeight + 50 ||
           missile.position.dy < -50 ||
           missile.position.dx < -50 ||
-          missile.position.dx > 450,
+          missile.position.dx > screenWidth + 50,
     );
     // Add new explosions
     explosions.addAll(newExplosions);

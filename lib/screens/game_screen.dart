@@ -20,6 +20,18 @@ class _GameScreenState extends State<GameScreen> {
     controller = Get.put(GameController());
   }
 
+  String formatCost(int cost) {
+    if (cost >= 1000000000) {
+      return '\$${(cost / 1000000000).toStringAsFixed(1)}B';
+    } else if (cost >= 1000000) {
+      return '\$${(cost / 1000000).toStringAsFixed(1)}M';
+    } else if (cost >= 1000) {
+      return '\$${(cost / 1000).toStringAsFixed(0)}K';
+    } else {
+      return '\$$cost';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,20 +68,90 @@ class _GameScreenState extends State<GameScreen> {
           // Update controller with screen dimensions
           controller.setScreenSize(constraints.maxWidth, constraints.maxHeight);
 
-          return GestureDetector(
-            onTapDown: (details) {
-              controller.fireInterceptor(details.localPosition);
-            },
-            child: GetBuilder<GameController>(
-              builder:
-                  (ctrl) => CustomPaint(
+          return Stack(
+            children: [
+              // Game canvas
+              GestureDetector(
+                onTapDown: (details) {
+                  controller.fireInterceptor(details.localPosition);
+                },
+                child: GetBuilder<GameController>(
+                  builder:
+                      (ctrl) => CustomPaint(
                     painter: GamePainter(
                       missiles: ctrl.missiles,
                       explosions: ctrl.explosions,
                     ),
                     size: Size.infinite,
                   ),
-            ),
+                ),
+              ),
+
+              // Cost meter overlay
+              Positioned(
+                top: 20,
+                left: 20,
+                child: GetBuilder<GameController>(
+                  builder:
+                      (ctrl) => Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.8),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: Colors.blue.withValues(alpha: 0.6),
+                            width: 1,
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'MISSILE COST',
+                              style: TextStyle(
+                                color: Colors.blue[300],
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'monospace',
+                                letterSpacing: 1.0,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              formatCost(ctrl.totalCost.value),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'monospace',
+                                letterSpacing: 1.0,
+                                shadows: [
+                                  Shadow(
+                                    offset: Offset(0, 1),
+                                    blurRadius: 2,
+                                    color: Colors.blue,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Text(
+                              '${ctrl.totalCost.value ~/ GameController.costPerMissile} missiles fired',
+                              style: TextStyle(
+                                color: Colors.grey[400],
+                                fontSize: 10,
+                                fontFamily: 'monospace',
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                ),
+              ),
+            ],
           );
         },
       ),

@@ -8,6 +8,7 @@ import '../models/missile.dart';
 class GameController extends GetxController {
   final missiles = <Missile>[].obs;
   final explosions = <Explosion>[].obs;
+  final totalCost = 0.obs; // Track total cost in dollars
   Timer? gameTimer;
   Timer? spawnTimer;
   final Random random = Random();
@@ -15,6 +16,9 @@ class GameController extends GetxController {
   // Screen dimensions
   double screenWidth = 400;
   double screenHeight = 650;
+  
+  // Cost per missile launch
+  static const int costPerMissile = 50000; // $50K per missile
 
   // Image caches
   ui.Image? enemyMissileImage;
@@ -105,6 +109,9 @@ class GameController extends GetxController {
         image: interceptorImage,
       ),
     );
+    
+    // Add cost for missile launch
+    totalCost.value += costPerMissile;
   }
 
   void updateGame() {

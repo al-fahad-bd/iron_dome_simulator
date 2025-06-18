@@ -212,83 +212,168 @@ class GamePainter extends CustomPainter {
     final centerX = size.width / 2;
     final bottomY = size.height - 50;
     
-    // Draw base platform
+    // Draw main platform base
     final platformPaint =
         Paint()
           ..color = Colors.grey[900]!
           ..style = PaintingStyle.fill;
     canvas.drawRect(
-      Rect.fromLTWH(centerX - 50, bottomY - 30, 100, 30),
+      Rect.fromLTWH(centerX - 60, bottomY - 25, 120, 25),
       platformPaint,
     );
-
-    // Draw launcher structure
-    final structurePaint =
-        Paint()
-          ..color = Colors.grey[800]!
-          ..style = PaintingStyle.fill;
-
-    // Draw vertical support
-    canvas.drawRect(
-      Rect.fromLTWH(centerX - 10, bottomY - 50, 20, 20),
-      structurePaint,
-    );
-
-    // Draw launcher arms
-    final armPaint =
+    
+    // Draw platform border
+    final borderPaint =
         Paint()
           ..color = Colors.grey[700]!
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 6
-          ..strokeCap = StrokeCap.round;
-
-    // Left arm
-    canvas.drawLine(
-      Offset(centerX - 10, bottomY - 50),
-      Offset(centerX - 30, bottomY - 60),
-      armPaint,
+          ..strokeWidth = 2;
+    canvas.drawRect(
+      Rect.fromLTWH(centerX - 60, bottomY - 25, 120, 25),
+      borderPaint,
     );
 
-    // Right arm
-    canvas.drawLine(
-      Offset(centerX + 10, bottomY - 50),
-      Offset(centerX + 30, bottomY - 60),
-      armPaint,
+    // Draw central support structure
+    final supportPaint =
+        Paint()
+          ..color = Colors.grey[800]!
+          ..style = PaintingStyle.fill;
+    canvas.drawRect(
+      Rect.fromLTWH(centerX - 15, bottomY - 45, 30, 20),
+      supportPaint,
     );
-
-    // Draw launcher details
-    final detailPaint =
+    
+    // Draw launcher arms
+    final armPaint =
         Paint()
           ..color = Colors.grey[600]!
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 3;
+          ..strokeWidth = 4
+          ..strokeCap = StrokeCap.round;
+    
+    // Left launcher arm
+    canvas.drawLine(
+      Offset(centerX - 15, bottomY - 45),
+      Offset(centerX - 35, bottomY - 55),
+      armPaint,
+    );
+    
+    // Right launcher arm
+    canvas.drawLine(
+      Offset(centerX + 15, bottomY - 45),
+      Offset(centerX + 35, bottomY - 55),
+      armPaint,
+    );
+    
+    // Draw missile tubes
+    final tubePaint =
+        Paint()
+          ..color = Colors.grey[850]!
+          ..style = PaintingStyle.fill;
 
-    // Draw circular details
-    canvas.drawCircle(
-      Offset(centerX, bottomY - 45), 8,
-      detailPaint,
+    // Left missile tube
+    canvas.drawRect(
+      Rect.fromLTWH(centerX - 40, bottomY - 60, 12, 20),
+      tubePaint,
     );
 
-    // Draw targeting reticle
-    final reticlePaint =
+    // Right missile tube
+    canvas.drawRect(
+      Rect.fromLTWH(centerX + 28, bottomY - 60, 12, 20),
+      tubePaint,
+    );
+
+    // Draw tube borders
+    final tubeBorderPaint =
         Paint()
-          ..color = Colors.red.withValues(alpha: 0.7)
+          ..color = Colors.grey[700]!
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1;
+
+    canvas.drawRect(
+      Rect.fromLTWH(centerX - 40, bottomY - 60, 12, 20),
+      tubeBorderPaint,
+    );
+
+    canvas.drawRect(
+      Rect.fromLTWH(centerX + 28, bottomY - 60, 12, 20),
+      tubeBorderPaint,
+    );
+
+    // Draw central control unit
+    final controlPaint =
+        Paint()
+          ..color = Colors.grey[800]!
+          ..style = PaintingStyle.fill;
+    canvas.drawRect(
+      Rect.fromLTWH(centerX - 12, bottomY - 50, 24, 15),
+      controlPaint,
+    );
+
+    // Draw control unit border
+    final controlBorderPaint =
+        Paint()
+          ..color = Colors.grey[600]!
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1;
+    canvas.drawRect(
+      Rect.fromLTWH(centerX - 12, bottomY - 50, 24, 15),
+      controlBorderPaint,
+    );
+    
+    // Draw targeting system
+    final targetPaint =
+        Paint()
+          ..color = Colors.blue
           ..style = PaintingStyle.stroke
           ..strokeWidth = 2;
-
+    
+    // Central targeting reticle
     canvas.drawCircle(
-      Offset(centerX, bottomY - 45), 12,
-      reticlePaint,
+      Offset(centerX, bottomY - 42), 8, targetPaint,
+    );
+    
+    // Targeting crosshairs
+    canvas.drawLine(
+      Offset(centerX, bottomY - 50),
+      Offset(centerX, bottomY - 34),
+      targetPaint,
     );
     canvas.drawLine(
-      Offset(centerX, bottomY - 57),
-      Offset(centerX, bottomY - 33),
-      reticlePaint,
+      Offset(centerX - 8, bottomY - 42),
+      Offset(centerX + 8, bottomY - 42),
+      targetPaint,
     );
-    canvas.drawLine(
-      Offset(centerX - 12, bottomY - 45),
-      Offset(centerX + 12, bottomY - 45),
-      reticlePaint,
+
+    // Draw status indicators
+    final statusPaint =
+        Paint()
+          ..color = Colors.green
+          ..style = PaintingStyle.fill;
+
+    // Left status light
+    canvas.drawCircle(Offset(centerX - 25, bottomY - 35), 3, statusPaint);
+
+    // Right status light
+    canvas.drawCircle(Offset(centerX + 25, bottomY - 35), 3, statusPaint);
+
+    // Draw platform panels
+    final panelPaint =
+        Paint()
+          ..color = Colors.grey[800]!
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1;
+
+    // Left panel
+    canvas.drawRect(
+      Rect.fromLTWH(centerX - 50, bottomY - 20, 20, 10),
+      panelPaint,
+    );
+
+    // Right panel
+    canvas.drawRect(
+      Rect.fromLTWH(centerX + 30, bottomY - 20, 20, 10),
+      panelPaint,
     );
   }
 

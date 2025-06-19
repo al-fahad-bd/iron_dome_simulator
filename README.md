@@ -29,8 +29,8 @@ This project is a starting point for a Flutter application.
 ## App Download 📲
 
 Get the latest version of the app:
-- [Android APK]((https://drive.google.com/drive/folders/1CU2QosXPAzrmTTAMM9KJIo28zF8C_qlH)) *(download from google drive)*
-- [iOS Build](https://example.com/iron_dome_simulation.ipa) *(not yet available)*
+- [Android APK](https://drive.google.com/drive/folders/1CU2QosXPAzrmTTAMM9KJIo28zF8C_qlH) *(download from Google Drive)*
+- iOS Build *(coming soon)*
 
 ## Resources 📚
 

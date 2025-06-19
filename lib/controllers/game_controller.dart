@@ -12,6 +12,7 @@ class GameController extends GetxController {
   final successfulInterceptions =
       0.obs; // Track successful missile interceptions
   final groundHits = 0.obs; // Track enemy missiles that hit the ground
+  final gameOver = false.obs; // Track if game is over
   Timer? gameTimer;
   Timer? spawnTimer;
   final Random random = Random();
@@ -166,7 +167,11 @@ class GameController extends GetxController {
         // Add explosion at the hit location
         explosions.add(Explosion(position: missile.position, isGround: true));
         groundHits.value++;
-        // (Optional) You can add logic here for lives, score, etc.
+        if (groundHits.value >= 5 && !gameOver.value) {
+          gameOver.value = true;
+          gameTimer?.cancel();
+          spawnTimer?.cancel();
+        }
       }
       return outOfBounds || hitProtectedZone;
     });
@@ -179,6 +184,17 @@ class GameController extends GetxController {
       explosion.lifetime--;
     }
     explosions.removeWhere((e) => e.lifetime <= 0 || e.opacity <= 0);
+    update();
+  }
+
+  void resetGame() {
+    missiles.clear();
+    explosions.clear();
+    totalCost.value = 0;
+    successfulInterceptions.value = 0;
+    groundHits.value = 0;
+    gameOver.value = false;
+    startGame();
     update();
   }
 

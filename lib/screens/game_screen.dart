@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:get/get.dart';
 import '../controllers/game_controller.dart';
 import '../models/missile.dart';
+import 'package:flutter/services.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -19,6 +20,168 @@ class _GameScreenState extends State<GameScreen> {
   void initState() {
     super.initState();
     controller = Get.put(GameController());
+    ever(controller.gameOver, (isOver) {
+      if (isOver == true) {
+        Future.delayed(Duration.zero, showGameOverDialog);
+      }
+    });
+  }
+
+  void showGameOverDialog() {
+    Get.dialog(
+      PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) {},
+        child: Center(
+          child: Container(
+            width: 350,
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.92),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: Colors.blueAccent.withValues(alpha: 0.5),
+                width: 3,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.blueAccent.withValues(alpha: 0.3),
+                  blurRadius: 24,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.warning_amber_rounded,
+                  color: Colors.redAccent,
+                  size: 64,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'GAME OVER',
+                  style: TextStyle(
+                    color: Colors.redAccent.shade200,
+                    fontSize: 36,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'monospace',
+                    letterSpacing: 4.0,
+                    decoration: TextDecoration.none,
+                    shadows: [
+                      Shadow(
+                        offset: Offset(0, 0),
+                        blurRadius: 16,
+                        color: Colors.redAccent.withValues(alpha: 0.7),
+                      ),
+                      Shadow(
+                        offset: Offset(0, 2),
+                        blurRadius: 8,
+                        color: Colors.blueAccent.withValues(alpha: 0.5),
+                      ),
+                    ],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 18),
+                Text(
+                  '5 enemy missiles hit the ground!\n\nThe protected zone has been breached.',
+                  style: TextStyle(
+                    color: Colors.blue[100],
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'monospace',
+                    letterSpacing: 1.2,
+                    decoration: TextDecoration.none,
+                    shadows: [
+                      Shadow(
+                        offset: Offset(0, 1),
+                        blurRadius: 6,
+                        color: Colors.blueAccent.withValues(alpha: 0.3),
+                      ),
+                    ],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 28),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        icon: const Icon(Icons.refresh, color: Colors.white),
+                        label: const Text(
+                          'RESTART',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            letterSpacing: 2.0,
+                            color: Colors.white,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue[700],
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 14,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 8,
+                          shadowColor: Colors.blueAccent,
+                        ),
+                        onPressed: () {
+                          Get.back();
+                          controller.resetGame();
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        icon: const Icon(
+                          Icons.exit_to_app,
+                          color: Colors.white,
+                        ),
+                        label: const Text(
+                          'EXIT',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            letterSpacing: 2.0,
+                            color: Colors.white,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red[700],
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 14,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 8,
+                          shadowColor: Colors.redAccent,
+                        ),
+                        onPressed: () {
+                          SystemNavigator.pop();
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      barrierDismissible: false,
+    );
   }
 
   String formatCost(int cost) {
